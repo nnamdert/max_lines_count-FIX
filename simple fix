@@ -1,0 +1,14 @@
+//The script below works in Tradingview V5 and should be placed at the TOP of the Indicator just under the built-in indicator function
+//HANDLES MAX_LINES_COUNTS ISSUE================================================================================================//
+lineLimit = input.int(                                                                                                          //
+ defval = 500,                                                                                                                  //
+ title = 'Limit Max Lines to Show',                                                                                             // 
+ minval = 1,                                                                                                                    //
+ maxval = 500,                                                                                                                  //
+ tooltip = 'Adjust this number to increase or decrease the total number of lines seen on the chart. (ONLY this indicator)',     //
+ group = 'Line Settings'                                                                                                        //
+ )                                                                                                                              //
+if array.size(line.all) > lineLimit                                                                                             //
+    for i = 0 to array.size(line.all) - lineLimit - 1                                                                           //
+        line.delete(array.get(line.all, i))                                                                                     //
+//END HANDLES MAX_LINES_COUNTS ISSUE============================================================================================//
