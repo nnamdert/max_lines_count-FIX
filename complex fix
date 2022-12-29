@@ -1,0 +1,29 @@
+//This is a more complex fix to address mutiple line styles within an indicator when you need to limit a certain line, but not other lines
+//This script works in Version 5 (not tested in Version 4)
+//@version=5
+indicator("Limited Lines", overlay =  true, max_lines_count = 500)
+//GET GLOBAL USER INPUTS // Allow user to define how crazy they want their chart to look by setting extend and maximum lines
+show_Lines = input.bool(true, title = 'Show Limited Lines on the Chart?')
+extend_Limited_Line = input.bool(defval = true, title = 'Extend the Limited Line?') ? extend.both : extend.none
+limited_Line_Limit = input.int(defval = 300, title = 'Set Max Limited Lines to show on chart')
+
+//the line below is a line that is not affected by the line limits
+ignored_line_ = line.new(bar_index[5], high[5], bar_index, low)
+
+//the line below is a line that is specifically pushed to an array and subject to user 
+//defined line limits per the limited_Line_Limit integer input
+limited_Line_ = line.new(not show_Lines ? na : 
+ bar_index[1], low[1], bar_index, high, 
+ color = color.new(color.orange, 0), 
+ style = line.style_dotted, 
+ extend = extend_Limited_Line)
+// Define an Array to push limited lines to
+var limitedLineArray = array.new_line()
+// After Drawing a Line, push it into an array
+array.push(limitedLineArray, limited_Line_) 
+
+if array.size(limitedLineArray) > limited_Line_Limit
+    // Note: removing the line from the array does not delete it from the chart, and deleting it from the chart does not remove it from the array.
+    // Both these things need to be done separately.
+    _1st_limited_Line = array.remove(limitedLineArray, 0) 
+    line.delete(_1st_limited_Line)
